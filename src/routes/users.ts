@@ -4,5 +4,5 @@ import UserController from "../controllers/usersController.js";
 const usersController = new UserController();
 
 export async function usersRoutes(app: FastifyInstance) {
-  app.post("/", usersController.create);
+  app.post("/signup", usersController.create);
 }
