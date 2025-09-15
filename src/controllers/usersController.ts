@@ -21,17 +21,29 @@ class UserController {
 
     const hashedPassword = await hashPassword(data.password);
 
-    await prisma.user.create({
-      data: {
-        firstName: data.firstName,
-        secondName: data.lastName,
-        email: data.email,
-        phoneNumber: data.phoneNumber,
-        password: hashedPassword,
-      },
-    });
+    try {
+      const user = await prisma.user.create({
+        data: {
+          firstName: data.firstName,
+          secondName: data.lastName,
+          email: data.email,
+          phoneNumber: data.phoneNumber,
+          department: data.department,
+          role: data.role,
+          password: hashedPassword,
+        },
+      });
+      const token = await reply.jwtSign(
+        {},
+        {
+          sign: {
+            sub: user.id,
+          },
+        }
+      );
 
-    reply.code(201).send({ message: "Usuário criado com sucesso" });
+      reply.code(201).send({ user, token });
+    } catch (error) {}
   }
 }
 
