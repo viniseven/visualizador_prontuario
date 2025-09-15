@@ -16,7 +16,7 @@ class UserController {
     });
 
     if (findUserWithEmail) {
-      reply.code(400).send("Este endereço de email já está em uso");
+      reply.code(400).send({ message: "Este email já está em uso" });
     }
 
     const hashedPassword = await hashPassword(data.password);
@@ -30,6 +30,8 @@ class UserController {
         password: hashedPassword,
       },
     });
+
+    reply.code(201).send({ message: "Usuário criado com sucesso" });
   }
 }
 
