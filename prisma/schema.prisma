@@ -13,7 +13,10 @@ model User {
   secondName  String
   email       String   @unique
   phoneNumber String
+  department  String
+  role        String
   password    String
+  isVerified  Boolean  @default(false)
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
