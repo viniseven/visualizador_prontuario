@@ -8,6 +8,8 @@ export const createUserSchema = z
       .email({ error: "Email inválido" })
       .nonempty({ error: "O email é obrigatório" }),
     phoneNumber: z.string().max(11, { error: "Número de telefone inválido" }),
+    department: z.string().nonempty({ error: "O setor é obrigatório" }),
+    role: z.string().nonempty({ error: "A função é obrigatória" }),
     password: z
       .string()
       .min(8, { error: "A senha deverá conter pelo menos 8 caracteres" })
