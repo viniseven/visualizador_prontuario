@@ -1,5 +1,5 @@
 import fastify from "fastify";
-import { env } from "./env";
+import { env } from "./env/index.js";
 import { usersRoutes } from "./routes/users.js";
 import { errorHandler } from "./middlewares/errorHandler.js";
 import fastifyJwt from "@fastify/jwt";
