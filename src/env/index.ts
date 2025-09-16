@@ -7,6 +7,12 @@ const envSchema = z.object({
   PORT: z.coerce.number().default(3333),
   JWT_SECRET: z.string(),
   JWT_EXPIRES_IN: z.string(),
+  API_BASE_URL: z.string(),
+  SERVICE: z.string(),
+  HOST: z.string(),
+  PORT_SMTP: z.coerce.number(),
+  USER_MAIL: z.string(),
+  PASS_MAIL: z.string(),
 });
 
 export const _env = envSchema.safeParse(process.env);
