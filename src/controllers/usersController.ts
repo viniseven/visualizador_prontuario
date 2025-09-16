@@ -2,6 +2,9 @@ import { type FastifyReply, type FastifyRequest } from "fastify";
 import { PrismaClient } from "@prisma/client";
 import { createUserSchema } from "../schemas/userSchema.js";
 import { hashPassword } from "../utils/bcrypt.js";
+import { generateTokenVerifyEmail } from "../utils/generateTokenVerify.js";
+import { env } from "../env/index.js";
+import { handlerSendEmail } from "../utils/sendEmailVerify.js";
 
 const prisma = new PrismaClient();
 
@@ -25,7 +28,7 @@ class UserController {
       const user = await prisma.user.create({
         data: {
           firstName: data.firstName,
-          secondName: data.lastName,
+          lastName: data.lastName,
           email: data.email,
           phoneNumber: data.phoneNumber,
           department: data.department,
@@ -33,17 +36,21 @@ class UserController {
           password: hashedPassword,
         },
       });
-      const token = await reply.jwtSign(
-        {},
-        {
-          sign: {
-            sub: user.id,
-          },
-        }
-      );
 
-      reply.code(201).send({ user, token });
-    } catch (error) {}
+      const token = await generateTokenVerifyEmail(user.id, reply);
+      const urlVerifyRegisterUser = env.API_BASE_URL + token;
+      await handlerSendEmail(user, urlVerifyRegisterUser);
+
+      if (!handlerSendEmail) {
+        reply.code(500).send({ message: "Erro interno do servidor" });
+      }
+
+      reply
+        .code(200)
+        .send({ message: "Email da validação enviado com sucesso" });
+    } catch (error) {
+      reply.code(500).send({ message: "Ocorreu um erro, tente novamente" });
+    }
   }
 }
 
