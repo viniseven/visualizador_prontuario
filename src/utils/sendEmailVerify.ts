@@ -26,7 +26,7 @@ export async function handlerSendEmail(
     from: "Visualizador de prontuário <env.USER_MAIL>",
     to: user.email,
     subject: "Validação de cadastro",
-    text: `<h1>Validação de cadastro de usuário</h1>
+    html: `<h2>Validação de cadastro de usuário</h2>
           <h3>Dados do usuário</h3>
           <p>Nome:${user.firstName} ${user.lastName}</p>
           <p>Email:${user.email}</p>
