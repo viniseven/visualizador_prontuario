@@ -38,7 +38,7 @@ class UserController {
       });
 
       const token = await generateTokenVerifyEmail(user.id, reply);
-      const urlVerifyRegisterUser = env.API_BASE_URL + token;
+      const urlVerifyRegisterUser = `${env.API_BASE_URL}/verify-email?token=${token}`;
       await handlerSendEmail(user, urlVerifyRegisterUser);
 
       if (!handlerSendEmail) {
