@@ -1,21 +1,32 @@
 import { type FastifyReply, type FastifyRequest } from "fastify";
-import { z } from "zod";
+import { PrismaClient } from "@prisma/client";
 
-const verifyTokenSchema = z.object({
-  token: z.string().nonempty({ error: "O link é inválido" }),
-});
+const prisma = new PrismaClient();
 
 class VerifyEmailController {
-  async create(request: FastifyRequest, reply: FastifyReply) {
-    try {
-      const { token } = verifyTokenSchema.parse(request.query);
+  async validate(request: FastifyRequest, reply: FastifyReply) {
+    const { sub: userId } = request.user;
 
-      const { sub } = reply.server.jwt.verify(token);
+    const findUserWithId = await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
 
-      reply.send({ userId: sub });
-    } catch (error) {}
+    if (!findUserWithId) {
+      return reply.code(404).send({ message: "Usuário não encontrado" });
+    }
 
-    reply.code(401).send({ message: "Token expirado ou inválido" });
+    await prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        isVerified: true,
+      },
+    });
+
+    return reply.code(200).send({ message: "Usuário verificado com sucesso" });
   }
 }
 
