@@ -1,10 +1,10 @@
 import { type FastifyReply, type FastifyRequest } from "fastify";
 import { PrismaClient } from "@prisma/client";
 import { createUserSchema } from "../schemas/userSchema.js";
-import { hashPassword } from "../utils/bcrypt.js";
-import { generateTokenVerifyEmail } from "../utils/generateTokenVerify.js";
+import { generateToken } from "../utils/generateToken.js";
 import { env } from "../env/index.js";
 import { handlerSendEmail } from "../utils/sendEmailVerify.js";
+import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 
@@ -19,10 +19,13 @@ class UserController {
     });
 
     if (findUserWithEmail) {
-      reply.code(400).send({ message: "Este email já está em uso" });
+      return reply.code(400).send({ message: "Este email já está em uso" });
     }
 
-    const hashedPassword = await hashPassword(data.password);
+    const hashedPassword = await bcrypt.hash(
+      data.password,
+      env.SALT_ROUND_HASH
+    );
 
     try {
       const user = await prisma.user.create({
@@ -37,19 +40,21 @@ class UserController {
         },
       });
 
-      const token = await generateTokenVerifyEmail(user.id, reply);
+      const token = await generateToken(user.id, reply);
       const urlVerifyRegisterUser = `${env.API_BASE_URL}/verify-email?token=${token}`;
       await handlerSendEmail(user, urlVerifyRegisterUser);
 
       if (!handlerSendEmail) {
-        reply.code(500).send({ message: "Erro interno do servidor" });
+        return reply.code(500).send({ message: "Erro interno do servidor" });
       }
 
-      reply
+      return reply
         .code(200)
-        .send({ message: "Email da validação enviado com sucesso" });
+        .send({ message: "Email da validação enviado com sucesso", token });
     } catch (error) {
-      reply.code(500).send({ message: "Ocorreu um erro, tente novamente" });
+      return reply
+        .code(500)
+        .send({ message: "Ocorreu um erro, tente novamente" });
     }
   }
 }
