@@ -5,7 +5,7 @@ const verifyTokenSchema = z.object({
   token: z.string().nonempty({ error: "O link é inválido" }),
 });
 
-export async function verifyTokenEmail(
+export async function verifyTokenValidation(
   request: FastifyRequest,
   reply: FastifyReply
 ) {

@@ -1,13 +1,13 @@
 import type { FastifyInstance } from "fastify";
-import VerifyEmailController from "../controllers/verifyEmailController.js";
-import { verifyTokenEmail } from "../hooks/verifyTokenEmail.js";
+import VerifyEmail from "../controllers/verifyEmail.js";
+import { verifyTokenValidation } from "../hooks/verifyTokenEmail.js";
 
-const verifyEmailController = new VerifyEmailController();
+const verifyEmailController = new VerifyEmail();
 
 export async function verifyRoutes(app: FastifyInstance) {
   app.get(
     "/verify-email",
-    { preHandler: [verifyTokenEmail] },
+    { preHandler: [verifyTokenValidation] },
     verifyEmailController.validate
   );
 }

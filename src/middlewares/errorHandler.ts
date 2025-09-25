@@ -17,6 +17,6 @@ export function errorHandler(
   }
 
   return reply.status(500).send({
-    message: "Internal server error",
+    message: "Erro interno do servidor",
   });
 }

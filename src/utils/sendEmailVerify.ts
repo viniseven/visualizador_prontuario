@@ -7,7 +7,7 @@ type emailUserSchema = Pick<
   "firstName" | "lastName" | "email" | "department" | "role"
 >;
 
-export async function handlerSendEmail(
+export async function sendEmailValidation(
   user: emailUserSchema,
   urlVerify: string
 ) {
