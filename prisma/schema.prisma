@@ -22,3 +22,21 @@ model User {
 
   @@map("users")
 }
+
+model Patient {
+  id            String   @id @default(uuid())
+  medicalRecord Int
+  firstName     String
+  lastName      String
+  birthDate     DateTime
+  cpf           Int      @unique
+  rg            Int      @unique
+  phoneNumber   String
+  gender        String
+  address       String
+  city          String
+  state         String
+  zipCode       Int
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+}
